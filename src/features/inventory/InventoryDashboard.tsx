@@ -111,23 +111,22 @@ export default function InventoryDashboard() {
   const focusForm = scrollToTop;
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-100 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-50/25 via-zinc-100 to-zinc-100">
+    <div className="min-h-screen flex flex-col bg-zinc-50">
       <Toaster
         position="top-center"
-        containerClassName="!top-3 sm:!top-4"
         toastOptions={{
-          duration: 3500,
-          className: '!bg-white !text-zinc-900 !border !border-zinc-200 !shadow-lg !text-sm',
-          success: { iconTheme: { primary: '#d97706', secondary: '#fff' } },
+          duration: 3000,
+          className: '!bg-white !text-zinc-900 !border !border-zinc-200 !text-sm',
+          success: { iconTheme: { primary: '#f59e0b', secondary: '#fff' } },
         }}
       />
 
       <AppHeader />
 
       <main className="flex-1 pb-safe">
-        <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6">
-          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,2fr)]">
-            <section className="order-1 min-w-0 space-y-3 sm:space-y-4 lg:order-2">
+        <div className="mx-auto max-w-7xl px-4 py-6">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,2fr)]">
+            <section className="order-1 min-w-0 space-y-4 lg:order-2">
               {!isLoading && products.length > 0 && (
                 <InventorySummary
                   totalItems={totalItems}
@@ -138,16 +137,15 @@ export default function InventoryDashboard() {
               )}
 
               <PanelCard
-                title="Your inventory"
+                title="Products"
                 subtitle={
                   isLoading
-                    ? 'Loading products...'
+                    ? 'Loading...'
                     : products.length === 0
-                      ? 'No items yet — add one from the form.'
-                      : `Showing ${displayProducts.length} of ${products.length} product${products.length !== 1 ? 's' : ''}`
+                      ? 'No products yet'
+                      : `${displayProducts.length} of ${products.length}`
                 }
                 icon={LayoutList}
-                headerVariant="inventory"
                 toolbar={
                   products.length > 0 ? (
                     <SearchAndFilter
@@ -161,9 +159,9 @@ export default function InventoryDashboard() {
                 }
               >
                 {lowStockCount > 0 && !isLoading && products.length > 0 && (
-                  <div className="border-b border-amber-100 bg-amber-50/60 px-4 py-2 sm:px-5">
-                    <p className="text-xs font-medium text-amber-800">
-                      {lowStockCount} item{lowStockCount !== 1 ? 's' : ''} running low on stock
+                  <div className="border-b border-amber-200 bg-amber-50 px-5 py-2">
+                    <p className="text-xs font-medium text-amber-900">
+                      {lowStockCount} item{lowStockCount !== 1 ? 's' : ''} low on stock
                     </p>
                   </div>
                 )}
@@ -173,8 +171,8 @@ export default function InventoryDashboard() {
                 ) : products.length === 0 ? (
                   <EmptyState onAddFirst={focusForm} />
                 ) : displayProducts.length === 0 ? (
-                  <div className="px-4 py-12 text-center sm:px-5 sm:py-14">
-                    <p className="text-sm text-zinc-500">No products match your search.</p>
+                  <div className="px-5 py-12 text-center">
+                    <p className="text-sm text-zinc-500">No matches found</p>
                   </div>
                 ) : (
                   <ProductTable

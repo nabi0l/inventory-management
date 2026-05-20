@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import { Upload, Loader2, X, PlusCircle, PencilLine, ImageIcon } from 'lucide-react';
+import { Upload, Loader2, X, PlusCircle, PencilLine } from 'lucide-react';
 import { Product } from '@/lib/db/schema';
 import Image from 'next/image';
 import PanelCard from '@/components/ui/PanelCard';
 
 const inputClass =
-  'w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/25 outline-none transition duration-150';
+  'w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none';
 
 const btnSecondary =
-  'flex-1 inline-flex items-center justify-center gap-1 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 shadow-sm transition duration-150 hover:bg-zinc-100 hover:shadow-md focus:ring-2 focus:ring-zinc-400/40 outline-none disabled:opacity-50 disabled:cursor-not-allowed';
+  'flex-1 inline-flex items-center justify-center gap-1 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400/40 disabled:opacity-50 disabled:cursor-not-allowed';
 
 const btnPrimary =
-  'flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2.5 text-sm font-semibold text-zinc-950 shadow-md shadow-amber-500/25 transition duration-150 hover:from-amber-600 hover:to-amber-700 hover:shadow-lg hover:shadow-amber-500/35 focus:ring-2 focus:ring-amber-500/50 outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md';
+  'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
 const MAX_IMAGE_MB = 5;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -165,25 +165,21 @@ export default function ProductForm({
 
   return (
     <PanelCard
-      title={product ? 'Edit product' : 'New product'}
-      subtitle={
-        product
-          ? `Editing “${product.name}” — save or cancel when done.`
-          : 'Add a new item to your inventory.'
-      }
+      title={product ? 'Edit product' : 'Add product'}
+      subtitle={product ? `Editing "${product.name}"` : 'Fill in the details below'}
       icon={product ? PencilLine : PlusCircle}
-      className={product ? 'ring-2 ring-amber-400/40 border-amber-300/80' : ''}
+      className={product ? 'border-amber-400' : ''}
     >
-      <form onSubmit={handleSubmit} className="space-y-4 p-4 sm:p-5" aria-busy={isLoading}>
+      <form onSubmit={handleSubmit} className="space-y-4 p-5" aria-busy={isLoading}>
         <div>
-          <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
-            Product image
+          <label className="mb-2 block text-sm font-medium text-zinc-700">
+            Image
           </label>
           {errors.image && !imagePreview && (
             <p className="mb-2 text-xs text-rose-600">{errors.image}</p>
           )}
           {imagePreview ? (
-            <div className="relative overflow-hidden rounded-xl border-2 border-amber-200 bg-zinc-50">
+            <div className="relative overflow-hidden rounded-lg border border-zinc-300 bg-zinc-50">
               <div className="relative aspect-[16/10] w-full">
                 {isDataPreview ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -202,16 +198,12 @@ export default function ProductForm({
                   />
                 )}
               </div>
-              <div className="flex items-center justify-between gap-2 border-t border-amber-100 bg-white/90 px-3 py-2">
+              <div className="flex items-center justify-between gap-2 border-t border-zinc-200 bg-white px-3 py-2">
                 <span className="text-xs text-zinc-500 truncate">
-                  {imageFile
-                    ? `${imageFile.name} → uploads to Cloudinary on save`
-                    : imageRemoved
-                      ? 'Image will be removed on save'
-                      : 'Stored in Cloudinary'}
+                  {imageFile ? imageFile.name : 'Current image'}
                 </span>
                 <div className="flex shrink-0 gap-2">
-                  <label className="cursor-pointer rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 shadow-sm transition duration-150 hover:bg-zinc-50 hover:shadow-md">
+                  <label className="cursor-pointer rounded border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
                     Change
                     <input
                       type="file"
@@ -225,7 +217,7 @@ export default function ProductForm({
                     type="button"
                     onClick={clearImage}
                     disabled={isLoading}
-                    className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 shadow-sm transition duration-150 hover:bg-zinc-50 hover:shadow-md disabled:opacity-50"
+                    className="rounded border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
                   >
                     Remove
                   </button>
@@ -240,20 +232,20 @@ export default function ProductForm({
               }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
-              className={`group/upload flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed py-8 transition duration-150 ${
+              className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed py-8 ${
                 isDragging
-                  ? 'border-amber-500 bg-amber-50/50'
-                  : 'border-zinc-200 bg-zinc-50/50 hover:border-amber-400 hover:bg-amber-50/30 hover:shadow-sm'
+                  ? 'border-amber-500 bg-amber-50'
+                  : 'border-zinc-300 bg-zinc-50 hover:border-amber-500'
               }`}
             >
-              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600 transition group-hover/upload:scale-105">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-200 text-zinc-600">
                 <Upload className="h-5 w-5" />
               </div>
-              <span className="text-xs text-zinc-500">
-                <span className="font-semibold text-amber-600">Click to upload</span> or drag here
+              <span className="text-sm text-zinc-600">
+                Click or drag image here
               </span>
-              <span className="mt-1 flex items-center gap-1 text-[11px] text-zinc-400">
-                <ImageIcon className="h-3 w-3" /> PNG, JPG up to 5MB
+              <span className="mt-1 text-xs text-zinc-400">
+                PNG or JPG, up to 5MB
               </span>
               <input
                 type="file"
@@ -264,9 +256,6 @@ export default function ProductForm({
               />
             </label>
           )}
-          <p className="mt-1.5 text-[11px] text-zinc-400">
-            Images are uploaded to Cloudinary when you save the product.
-          </p>
         </div>
 
         <div>
@@ -383,7 +372,7 @@ export default function ProductForm({
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {imageFile ? 'Uploading image…' : 'Saving…'}
+                {imageFile ? 'Uploading...' : 'Saving...'}
               </>
             ) : product ? (
               'Update product'
