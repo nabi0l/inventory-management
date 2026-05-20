@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { LayoutList } from 'lucide-react';
 import type { Product } from '@/lib/db/schema';
@@ -20,6 +20,7 @@ import ProductDetailModal from '@/components/modals/ProductDetailModal';
 import PanelCard from '@/components/ui/PanelCard';
 
 export default function InventoryDashboard() {
+  const formRef = useRef<HTMLDivElement>(null);
   const {
     products,
     isLoading,
@@ -52,7 +53,10 @@ export default function InventoryDashboard() {
 
   const handleSubmit = async (formData: FormData) => {
     const success = await saveProduct(formData, selectedProduct);
-    if (success) setSelectedProduct(null);
+    if (success) {
+      setSelectedProduct(null);
+      scrollToTop();
+    }
   };
 
   const handleDelete = async () => {
@@ -64,6 +68,7 @@ export default function InventoryDashboard() {
     if (selectedProduct?.id === productToDelete.id) setSelectedProduct(null);
     if (viewingProduct?.id === productToDelete.id) setViewingProduct(null);
     setProductToDelete(null);
+    scrollToTop();
   };
 
   const handleView = (product: Product) => {
@@ -75,7 +80,7 @@ export default function InventoryDashboard() {
     if (isSubmitting) return;
     setViewingProduct(null);
     setSelectedProduct(product);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop();
   };
 
   const handleDeleteClick = (product: Product) => {
@@ -84,7 +89,26 @@ export default function InventoryDashboard() {
     setIsDeleteModalOpen(true);
   };
 
-  const focusForm = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToTop = () => {
+    // Try multiple methods to ensure scroll works
+    requestAnimationFrame(() => {
+      // Method 1: Scroll to top of page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Method 2: Scroll form into view if ref exists
+      if (formRef.current) {
+        formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      
+      // Method 3: Force scroll on document elements (fallback)
+      setTimeout(() => {
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 50);
+    });
+  };
+
+  const focusForm = scrollToTop;
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-100 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-50/25 via-zinc-100 to-zinc-100">
@@ -170,7 +194,7 @@ export default function InventoryDashboard() {
               </PanelCard>
             </section>
 
-            <aside className="order-2 min-w-0 lg:order-1">
+            <aside ref={formRef} className="order-2 min-w-0 lg:order-1">
               <ProductForm
                 product={selectedProduct}
                 onSubmit={handleSubmit}
